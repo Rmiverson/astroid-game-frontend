@@ -3,10 +3,11 @@ const S_SIZE = 30 //ship size
 const SHIP_ACC = 5 //acceleration
 const R_SPEED = 420 //rotation speed
 const FR = 0.5 //friction
-const ASTEROID_NUM = 5 // max starting number of asteroids
+const ASTEROID_NUM = 5 // starting number of asteroids
 const ASTEROID_SPEED = 50 // max starting asteroid speed in pixels per second
-const ASTEROID_SIZE = 100
+const ASTEROID_SIZE = 100 // starting size in pixels
 const ASTEROIDS_VERT = 10 // avg num of vertices on each asteroid
+const ASTEROIDS_JAG = 0.5 // adds jaggedness to polygons
 
 // gets canvas elements for js use
 let c = document.getElementById("gameScreen")
@@ -105,11 +106,17 @@ const moveShip = () => {
 const createAsteroids = () => {
    asteroids = []
    let x, y
-   for (var i = 0; i < ASTEROID_NUM; i++) {
+   for (let i = 0; i < ASTEROID_NUM; i++) {
+      do {
       x = Math.floor(Math.random() * c.width)
       y = Math.floor(Math.random() * c.height)
+      } while (distBetweenPoints(ship.x, ship.y, x, y) < ASTEROID_SIZE * 2 + ship.r)
       asteroids.push(newAsteroid(x, y))
    }
+}
+
+const distBetweenPoints = (x1, y1, x2, y2) => {
+   return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 -y1, 2))
 }
 
 const newAsteroid = (x, y) => {
@@ -120,8 +127,13 @@ const newAsteroid = (x, y) => {
       yv: Math.random() * ASTEROID_SPEED / FPS * (Math.random () < 0.5 ? 1 : -1),
       r: ASTEROID_SIZE / 2,
       a: Math.random() * Math.PI * 2, // in radians
-      vert: Math.floor(Math.random() * (ASTEROIDS_VERT + 1) + ASTEROIDS_VERT / 2)
+      vert: Math.floor(Math.random() * (ASTEROIDS_VERT + 1) + ASTEROIDS_VERT / 2),
+      offs: []
    }
+   for (let i = 0; i < asteroid.vert; i++) {
+      asteroid.offs.push(Math.random() * ASTEROIDS_JAG * 2 + 1 - ASTEROIDS_JAG)
+   }
+
    return asteroid
 }
 
@@ -129,7 +141,7 @@ const newAsteroid = (x, y) => {
 const renderAsteroids = () => {
    ctx.strokeStyle = "grey"
    ctx.lineWidth = S_SIZE / 20
-   let x, y, r, a, vert
+   let x, y, r, a, vert, offs
    for (let i = 0; i < asteroids.length; i++) {
       //get the asteroid properties
       x = asteroids[i].x
@@ -137,26 +149,42 @@ const renderAsteroids = () => {
       r = asteroids[i].r
       a = asteroids[i].a
       vert = asteroids[i].vert
+      offs = asteroids[i].offs
 
       //draw path
       ctx.beginPath()
       ctx.moveTo(
-         x + r * Math.cos(a),
-         y + r * Math.sin(a)
+         x + r * offs[0] * Math.cos(a),
+         y + r * offs[0] * Math.sin(a)
       )
-   }
       // draw polygon
-      for (var j = 0; j < vert; j++) {
+      for (let j = 0; j < vert; j++) {
          ctx.lineTo(
-            x + r * Math.cos(a + j * Math.PI * 2 / vert),
-            y + r * Math.sin(a + j * Math.PI * 2 / vert)
+            x + r * offs[j] * Math.cos(a + j * Math.PI * 2 / vert),
+            y + r * offs[j] * Math.sin(a + j * Math.PI * 2 / vert)
          )
       }
       ctx.closePath()
       ctx.stroke()
+   
+   
       //move asteroid
+      asteroids[i].x += asteroids[i].xv
+      asteroids[i].y += asteroids[i].yv
 
       //handle edge of screen
+      if (asteroids[i].x < 0 - asteroids[i].r) {
+         asteroids[i].x = c.width + asteroids[i].r
+      } else if (asteroids[i].x > c.width + asteroids[i].r) {
+         asteroids[i].x = 0 - asteroids[i].r
+      }
+
+      if (asteroids[i].y < 0 - asteroids[i].r) {
+         asteroids[i].y = c.height + asteroids[i].r
+      } else if (asteroids[i].y > c.height + asteroids[i].r) {
+         asteroids[i].y = 0 - asteroids[i].r
+      }
+   }
 }
 
 // listens for key presses
