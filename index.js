@@ -27,48 +27,93 @@ c.height = window.innerHeight
 
 
 //DATA
-const createGame = (e) => {
-    fetch(GAMES_URL, {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({
-            'score': 0
-        }),
-    })
-    .then(resp => resp.json())
-    .then(game => createUser(e, game))
-}
+// const createGame = (e) => {
+//     fetch(GAMES_URL, {
+//         method: 'POST',
+//         headers: {'Content-Type': 'application/json'},
+//         body: JSON.stringify({
+//             'score': 0
+//         }),
+//     })
+//     .then(resp => resp.json())
+//     .then(game => createUser(e, game))
+// }
 
-const createUser = (e, game) => {
+// const createUser = (e, game) => {
+//     fetch(USERS_URL, {
+//         method: 'POST',
+//         headers: {'Content-Type': 'application/json'},
+//         body: JSON.stringify({
+//             'name': e.target.name.value,
+//             'game_id': game.id
+//         }),
+//     })
+//     .then(resp => resp.json())
+//     .then(user => createLevel(game, user))
+// }
+
+// const createLevel = (game, user) => {
+//     fetch(LEVELS_URL, {
+//         method: 'POST',
+//         headers: {'Content-Type': 'application/json'},
+//         body: JSON.stringify({
+//             'level': "beginner",
+//             'game_id': game.id
+//         }),  
+//     })
+//     .then(resp => resp.json())
+//     .then(startGame(game))
+// }
+
+// const getBoard = () => {
+//     fetch(USERS_URL)
+//     .then(resp => resp.json())
+//     .then(users => loadBoard(users))
+// }
+
+//V2
+const createUser = (e) => {
     fetch(USERS_URL, {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({
             'name': e.target.name.value,
-            'game_id': game.id
         }),
     })
     .then(resp => resp.json())
-    .then(user => createLevel(game, user))
+    .then(user => createLevel(user))
 }
 
-const createLevel = (game, user) => {
+const createLevel = (user) => {
     fetch(LEVELS_URL, {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({
             'level': "beginner",
-            'game_id': game.id
         }),  
     })
     .then(resp => resp.json())
-    .then(startGame(game))
+    .then(level => createGame(level, user))
+}
+
+const createGame = (level, user) => {
+    fetch(GAMES_URL, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+            'score': 0,
+            'user_id': user.id,
+            'level_id': level.id
+        }),      
+    })
+    .then(resp => resp.json())
+    .then(game => startGame(game))
 }
 
 const getBoard = () => {
-    fetch(USERS_URL)
+    fetch(GAMES_URL)
     .then(resp => resp.json())
-    .then(users => loadBoard(users))
+    .then(games => loadBoard(games))
 }
 
 
@@ -105,7 +150,25 @@ const mainMenu = () => {
     leaderBtn.addEventListener('click', getBoard)
 }
 
-const loadBoard = (users) => {
+// const loadBoard = (users) => {
+//     let container = document.querySelector('main')
+//     let exit = document.createElement('button')
+
+//     container.innerHTML = ""
+//     exit.textContent = 'X'
+
+//     container.appendChild(exit)
+//     exit.addEventListener('click', mainMenu)
+
+//     users.forEach(user => {
+//         let container = document.querySelector('main')
+//         let stat = document.createElement('h4')
+//         stat.textContent = `${user.name} ${user.game.score}`
+//         container.appendChild(stat)
+//     })
+// }
+
+const loadBoard = (games) => {
     let container = document.querySelector('main')
     let exit = document.createElement('button')
 
@@ -115,10 +178,12 @@ const loadBoard = (users) => {
     container.appendChild(exit)
     exit.addEventListener('click', mainMenu)
 
-    users.forEach(user => {
+    games.sort
+
+    games.forEach(game => {
         let container = document.querySelector('main')
         let stat = document.createElement('h4')
-        stat.textContent = `${user.name} ${user.game.score}`
+        stat.textContent = `${game.user.name} ${game.score}`
         container.appendChild(stat)
     })
 }
@@ -131,7 +196,8 @@ const handleSubmit = (e) => {
     if (e.target.name.value === "") {
         alert("Please enter your name")
     } else {
-        createGame(e)
+        // createGame(e)
+        createUser(e)
     }
 }
 
