@@ -15,6 +15,7 @@ let ctx = c.getContext("2d")
 
 // sets ship attributes
 let ship = {
+   alive: true,
    x: c.width / 2, //ship x position
    y: c.height / 2, //ship y position
    r: S_SIZE / 2, //ship radius or size
@@ -46,8 +47,15 @@ const renderGame = () => {
    ctx.fillStyle = "#2d2d2d"
    ctx.fillRect(0, 0, c.width, c.height)
    
-   renderShip()
-   renderAsteroids()
+   if (ship.alive === true) {
+      renderShip()
+      renderAsteroids()
+      asteroidCollision()
+   } else {
+      loadGameOver()
+      renderAsteroids()
+   }
+
 }
 
 //draws the ship and calls function to handle movement
@@ -102,6 +110,11 @@ const moveShip = () => {
 
 }
 
+// deletes ship
+const destroyShip = () => {
+   ship.alive = false
+}
+
 //asteroids function
 const createAsteroids = () => {
    asteroids = []
@@ -139,7 +152,7 @@ const newAsteroid = (x, y) => {
 
 //draws the asteroids
 const renderAsteroids = () => {
-   ctx.strokeStyle = "grey"
+   ctx.strokeStyle = "white"
    ctx.lineWidth = S_SIZE / 20
    let x, y, r, a, vert, offs
    for (let i = 0; i < asteroids.length; i++) {
@@ -185,6 +198,17 @@ const renderAsteroids = () => {
          asteroids[i].y = 0 - asteroids[i].r
       }
    }
+}
+
+// checks collision
+const asteroidCollision = () => {
+   for (let i = 0; i < asteroids.length; i++) {
+      if (distBetweenPoints(ship.x, ship.y, asteroids[i].x, asteroids[i].y) < ship.r + asteroids[i].r ){
+         destroyShip()
+         console.log("Bang!!!")
+      }
+   }
+  
 }
 
 // listens for key presses
