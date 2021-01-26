@@ -25,7 +25,7 @@ const renderGame = () => {
    renderShip()
 }
 
-const renderShip = (x, y) => {
+const renderShip = () => {
    ctx.fillStyle = "white"
    let path = new Path2D()
    path.moveTo(
