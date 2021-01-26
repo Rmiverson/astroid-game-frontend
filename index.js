@@ -1,20 +1,32 @@
+document.addEventListener("DOMContentLoaded", () => {
+    mainMenu()
+ })
 
+//VARIABLES
 const BASE_URL = "http://localhost:3000"
 const GAMES_URL = `${BASE_URL}/games`
 const USERS_URL = `${BASE_URL}/users`
 const LEVELS_URL = `${BASE_URL}/levels`
 
+const FPS = 30
+const S_SIZE = 30
 
-const handleSubmit = (e) => {
-    e.preventDefault()
+let c = document.getElementById("gameScreen")
+let ctx = c.getContext("2d")
 
-    if (e.target.name.value === "") {
-        alert("Please enter your name")
-    } else {
-        createGame(e)
-    }
+let ship = {
+   x: c.width / 2,
+   y: c.height / 2,
+   r: S_SIZE / 2,
+   a: 0 / 180 * Math.PI
 }
 
+c.width = window.innerWidth
+c.height = window.innerHeight
+
+
+
+//DATA
 const createGame = (e) => {
     fetch(GAMES_URL, {
         method: 'POST',
@@ -53,11 +65,8 @@ const createLevel = (game, user) => {
     .then(startGame(game))
 }
 
-const startGame = (game) => {
-    document.querySelector( 'main' ).style.display = 'none'
- 
-}
 
+//DOM
 const mainMenu = () => {
     let container = document.querySelector('main')
     let h2 = document.createElement('h2')
@@ -87,25 +96,22 @@ const mainMenu = () => {
     form.addEventListener("submit", handleSubmit)
 }
 
-const FPS = 30
-const S_SIZE = 30
+//EVENT HANDLERS
+const handleSubmit = (e) => {
+    e.preventDefault()
 
-document.addEventListener("DOMContentLoaded", () => {
-   setInterval(renderGame, 1000 / FPS)
-})
-
-let c = document.getElementById("gameScreen")
-let ctx = c.getContext("2d")
-
-let ship = {
-   x: c.width / 2,
-   y: c.height / 2,
-   r: S_SIZE / 2,
-   a: 0 / 180 * Math.PI
+    if (e.target.name.value === "") {
+        alert("Please enter your name")
+    } else {
+        createGame(e)
+    }
 }
 
-c.width = window.innerWidth
-c.height = window.innerHeight
+//GAME START
+const startGame = (game) => {
+    document.querySelector('main').style.display = 'none'
+    setInterval(renderGame, 1000 / FPS)
+}
 
 const renderGame = () => {
    ctx.fillStyle = "#2d2d2d"
@@ -136,5 +142,5 @@ const renderShip = () => {
 
 
 
-mainMenu()
+
 
