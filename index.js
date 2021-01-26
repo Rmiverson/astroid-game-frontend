@@ -64,12 +64,16 @@ const getBoard = () => {
 
 const startGame = (game) => {
     document.querySelector( 'main' ).style.display = 'none'
+    document.querySelector('canvas').style.display = ''
+    console.log(game)
     runGame()
 }
 
 const mainMenu = () => {
     let container = document.querySelector('main')
     container.innerHTML = ""
+
+    document.querySelector('canvas').style.display = "none"
 
     let h2 = document.createElement('h2')
     let p = document.createElement('p')
@@ -100,6 +104,8 @@ const mainMenu = () => {
 }
 
 const loadBoard = (games) => {
+    document.querySelector('canvas').style.display = "none"
+
     let container = document.querySelector('main')
     let exit = document.createElement('button')
 
@@ -114,7 +120,7 @@ const loadBoard = (games) => {
     games.slice(0, 10).forEach(game => {
         let container = document.querySelector('main')
         let stat = document.createElement('h4')
-        stat.textContent = `${game.user.name} ${game.score}`
+        stat.textContent = `${game.user.name} ${game.score} ${game.level.level}`
         container.appendChild(stat)
     })
 }
