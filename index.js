@@ -57,6 +57,7 @@ const createGame = (level, user) => {
     .then(game => startGame(game))
 }
 
+
 const getBoard = () => {
     fetch(GAMES_URL)
     .then(resp => resp.json())
@@ -119,13 +120,6 @@ const loadBoard = (games) => {
         container.appendChild(stat)
     })
 }
-
-
-
-
-
-
-
 
 
 
