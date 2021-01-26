@@ -14,46 +14,54 @@ const handleSubmit = (e) => {
     if (e.target.name.value === "") {
         alert("Please enter your name")
     } else {
-        createGame(e)
+        createUser(e)
     }
 }
 
-const createGame = (e) => {
-    fetch(GAMES_URL, {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({
-            'score': 0
-        }),
-    })
-    .then(resp => resp.json())
-    .then(game => createUser(e, game))
-}
-
-const createUser = (e, game) => {
+const createUser = (e) => {
     fetch(USERS_URL, {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({
             'name': e.target.name.value,
-            'game_id': game.id
         }),
     })
     .then(resp => resp.json())
-    .then(user => createLevel(game, user))
+    .then(user => createLevel(user))
 }
 
-const createLevel = (game, user) => {
+
+const createLevel = (user) => {
     fetch(LEVELS_URL, {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({
             'level': "beginner",
-            'game_id': game.id
         }),  
     })
     .then(resp => resp.json())
-    .then(startGame(game))
+    .then(level => createGame(level, user))
+}
+
+const createGame = (level, user) => {
+    fetch(GAMES_URL, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+            'score': 0,
+            'user_id': user.id,
+            'level_id': level.id
+        }),      
+    })
+    .then(resp => resp.json())
+    .then(game => startGame(game))
+}
+
+
+const getBoard = () => {
+    fetch(GAMES_URL)
+    .then(resp => resp.json())
+    .then(games => loadBoard(games))
 }
 
 const startGame = (game) => {
@@ -63,6 +71,8 @@ const startGame = (game) => {
 
 const mainMenu = () => {
     let container = document.querySelector('main')
+    container.innerHTML = ""
+
     let h2 = document.createElement('h2')
     let p = document.createElement('p')
     let leaderBtn = document.createElement('button')
@@ -87,6 +97,29 @@ const mainMenu = () => {
     form.append(nameInput, br, br2, playInput)
     container.append(h2, p, leaderBtn, h4, form)
 
-    form.addEventListener("submit", handleSubmit)
+    form.addEventListener('submit', handleSubmit)
+    leaderBtn.addEventListener('click', getBoard)
 }
+
+const loadBoard = (games) => {
+    let container = document.querySelector('main')
+    let exit = document.createElement('button')
+
+    container.innerHTML = ""
+    exit.textContent = 'X'
+
+    container.appendChild(exit)
+    exit.addEventListener('click', mainMenu)
+
+    games.sort
+
+    games.forEach(game => {
+        let container = document.querySelector('main')
+        let stat = document.createElement('h4')
+        stat.textContent = `${game.user.name} ${game.score}`
+        container.appendChild(stat)
+    })
+}
+
+
 
