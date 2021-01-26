@@ -65,10 +65,18 @@ const createLevel = (game, user) => {
     .then(startGame(game))
 }
 
+const getBoard = () => {
+    fetch(USERS_URL)
+    .then(resp => resp.json())
+    .then(users => loadBoard(users))
+}
+
 
 //DOM
 const mainMenu = () => {
     let container = document.querySelector('main')
+    container.innerHTML = ""
+
     let h2 = document.createElement('h2')
     let p = document.createElement('p')
     let leaderBtn = document.createElement('button')
@@ -93,8 +101,28 @@ const mainMenu = () => {
     form.append(nameInput, br, br2, playInput)
     container.append(h2, p, leaderBtn, h4, form)
 
-    form.addEventListener("submit", handleSubmit)
+    form.addEventListener('submit', handleSubmit)
+    leaderBtn.addEventListener('click', getBoard)
 }
+
+const loadBoard = (users) => {
+    let container = document.querySelector('main')
+    let exit = document.createElement('button')
+
+    container.innerHTML = ""
+    exit.textContent = 'X'
+
+    container.appendChild(exit)
+    exit.addEventListener('click', mainMenu)
+
+    users.forEach(user => {
+        let container = document.querySelector('main')
+        let stat = document.createElement('h4')
+        stat.textContent = `${user.name} ${user.game.score}`
+        container.appendChild(stat)
+    })
+}
+
 
 //EVENT HANDLERS
 const handleSubmit = (e) => {
