@@ -119,5 +119,26 @@ const loadBoard = (games) => {
     })
 }
 
+const loadGameOver = () => {
+    let container = document.querySelector('main')
+    let div = document.createElement('div')
+    let h1 = document.createElement('h1')
 
+    let menuBtn = document.createElement('button')
+    let leaderBtn = document.createElement('button')
+
+    container.innerHTML = ""
+    container.style.display = ""
+
+    div.className = 'modal'
+    h1.textContent = 'GAME OVER'
+    menuBtn.textContent = 'Main Menu'
+    leaderBtn.textContent = 'Leaderboards'
+
+    menuBtn.addEventListener('click', mainMenu)
+    leaderBtn.addEventListener('click', getBoard)
+
+    div.append(h1, menuBtn, leaderBtn)
+    container.appendChild(div)
+}
 
