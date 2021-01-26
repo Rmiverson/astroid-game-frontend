@@ -35,9 +35,7 @@ const createLevel = (user) => {
     fetch(LEVELS_URL, {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({
-            'level': "beginner",
-        }),  
+        body: JSON.stringify(),  
     })
     .then(resp => resp.json())
     .then(level => createGame(level, user))
@@ -110,9 +108,9 @@ const loadBoard = (games) => {
     container.appendChild(exit)
     exit.addEventListener('click', mainMenu)
 
-    games.sort
+    games.sort((a, b) => b.score - a.score)
 
-    games.forEach(game => {
+    games.slice(0, 10).forEach(game => {
         let container = document.querySelector('main')
         let stat = document.createElement('h4')
         stat.textContent = `${game.user.name} ${game.score}`
