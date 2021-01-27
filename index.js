@@ -155,7 +155,7 @@ const loadGameOver = (game) => {
     playBtn.textContent = 'Play Again?'
 
     playBtn.addEventListener('click', () => startGame(game))
-    profileBtn.addEventListener('click', () => loadProfile(game.user))
+    profileBtn.addEventListener('click', () => loadProfile(game.id))
     menuBtn.addEventListener('click', mainMenu)
     leaderBtn.addEventListener('click', getBoard)
 
@@ -164,7 +164,40 @@ const loadGameOver = (game) => {
     container.append(gameover, ul, menuBtn, leaderBtn, hr, playBtn)
 }
 
-const loadProfile = (user) => {
+const loadProfile = (userId) => {
+
+    // unfinished
+
     let container = document.querySelector('div')
     container.innerHTML = ""
+
+    let h1 = document.createElement('h1')
+    let form = document.createElement('form')
+    let newName = document.createElement('input')
+    let submit = document.createElement('input')
+    let dltUsrBtn = document.createElement('button')
+    let ul = document.createElement('ul')
+
+    h1.textContent = user.name
+    newName.setAttribute('type', 'text')
+    submit.setAttribute('type', 'submit')
+    form.append(newName, submit)
+    dltUsrBtn.textContent = 'Delete User'
+
+    user.games.forEach (game => {
+        let li = document.createElement('li')
+        let score = document.createElement('p')
+        let level = document.createElement('p')
+        let dlt = document.createElement('button')
+
+        score.textContent = 'Score: ' + game.score
+        level.textContent = 'Level: ' + game.level
+        dlt.textContent = 'Delete'
+
+        dlt.addEventListener('click', )
+
+        li.append(score, level, dlt)
+        ul.appendChild(li)
+    })
+
 }
