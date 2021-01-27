@@ -18,6 +18,46 @@ const handleSubmit = (e) => {
     }
 }
 
+
+//OLD CODE
+
+// const createUser = (e) => {
+//     fetch(USERS_URL, {
+//         method: 'POST',
+//         headers: {'Content-Type': 'application/json'},
+//         body: JSON.stringify({
+//             'name': e.target.name.value,
+//         }),
+//     })
+//     .then(resp => resp.json())
+//     .then(user => createLevel(user))
+// }
+
+// const createLevel = (user) => {
+//     fetch(LEVELS_URL, {
+//         method: 'POST',
+//         headers: {'Content-Type': 'application/json'},
+//         body: JSON.stringify({'id': user.id}),  
+//     })
+//     .then(resp => resp.json())
+//     .then(level => createGame(level, user))
+// }
+
+// const createGame = (level, user) => {
+//     fetch(GAMES_URL, {
+//         method: 'POST',
+//         headers: {'Content-Type': 'application/json'},
+//         body: JSON.stringify({
+//             'score': 0,
+//             'user_id': user.id,
+//             'level_id': level.id
+//         }),      
+//     })
+//     .then(resp => resp.json())
+//     .then(game => startGame(game))
+// }
+
+//NEW Code
 const createUser = (e) => {
     fetch(USERS_URL, {
         method: 'POST',
@@ -27,32 +67,32 @@ const createUser = (e) => {
         }),
     })
     .then(resp => resp.json())
-    .then(user => createLevel(user))
+    .then(startGame())
 }
 
-
-const createLevel = (user) => {
+const createLevel = (level, score) => {
     fetch(LEVELS_URL, {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({'id': user.id}),  
+        body: JSON.stringify({
+            'level': level,
+        }),
     })
     .then(resp => resp.json())
-    .then(level => createGame(level, user))
+    .then(level => createGame(level, score))
 }
 
-const createGame = (level, user) => {
+const createGame = (level, score) => {
     fetch(GAMES_URL, {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({
-            'score': 0,
-            'user_id': user.id,
+            'score': score,
             'level_id': level.id
         }),      
     })
     .then(resp => resp.json())
-    .then(game => startGame(game))
+    .then(game => loadGameOver(game))
 }
 
 
@@ -75,7 +115,13 @@ const deleteUser = (id) => {
 }
 
 const startGame = (game) => {
+<<<<<<< HEAD
     document.querySelector('div').innerHTML = ""
+=======
+    document.querySelector( 'main' ).style.display = 'none'
+    document.querySelector('canvas').style.display = ''
+    // console.log(game)
+>>>>>>> 0879dd70bbb82a86739a45b2e470434b49c4f6b0
     runGame(game)
 }
 
@@ -138,6 +184,7 @@ const loadBoard = (games) => {
 }
 
 const loadGameOver = (game) => {
+<<<<<<< HEAD
     let container = document.querySelector('div')
     container.innerHTML = ""
 
@@ -150,12 +197,26 @@ const loadGameOver = (game) => {
     let profileBtn = document.createElement('button')
     let hr = document.createElement('hr')
     let playBtn = document.createElement('button')
+=======
+    let main = document.querySelector('main')
+    let container = document.querySelector('div')
+    let div = document.createElement('div')
+    let h1 = document.createElement('h1')
+>>>>>>> 0879dd70bbb82a86739a45b2e470434b49c4f6b0
 
     let menuBtn = document.createElement('button')
     let leaderBtn = document.createElement('button')
 
+<<<<<<< HEAD
     container.className = 'modal'
     gameover.textContent = 'GAME OVER'
+=======
+    container.innerHTML = ""
+    main.style.display = ""
+
+    div.className = 'modal'
+    h1.textContent = 'GAME OVER'
+>>>>>>> 0879dd70bbb82a86739a45b2e470434b49c4f6b0
     menuBtn.textContent = 'Main Menu'
     leaderBtn.textContent = 'Leaderboards'
 

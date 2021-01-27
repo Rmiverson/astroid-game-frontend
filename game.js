@@ -4,7 +4,7 @@ const SHIP_ACC = 5 //acceleration
 const R_SPEED = 420 //rotation speed
 const FR = 0.5 //friction
 
-const ASTEROID_NUM = 5 // starting number of asteroids
+const ASTEROID_NUM = 1 // starting number of asteroids
 const ASTEROID_SPEED = 50 // max starting asteroid speed in pixels per second
 const ASTEROID_SIZE = 100 // starting size in pixels
 const ASTEROIDS_VERT = 10 // avg num of vertices on each asteroid
@@ -34,6 +34,10 @@ let ship = {
 
 }
 
+//set level and score
+let level = 0
+let score = 0
+
 //sets our canvas size to the current screen size
 c.width = window.innerWidth
 c.height = window.innerHeight
@@ -43,7 +47,7 @@ const runGame = (userGame) => {
    shipListeners()
    let asteroids = []
    createAsteroids()
-   let game = setInterval(() => {
+   let gameX = setInterval(() => {
       ctx.fillStyle = "#2d2d2d"
       ctx.fillRect(0, 0, c.width, c.height)
 
@@ -53,12 +57,18 @@ const runGame = (userGame) => {
          renderShipProjectile()
          projCollision()
          asteroidCollision()
+         checkAsteroidCount()
       } else {
-         loadGameOver(userGame)
+         createLevel(level, score)
+         // loadGameOver()
          renderAsteroids()
-         clearInterval(game)
-
+         clearInterval(gameX)
+         //Needed to set the ship back to alive to reset. Can we
+         //reset all the ship's values (because we need to reset the
+         //x and y coordinates too)? 
          ship.alive = true
+         level = 0
+         score = 0
       }
    }, 1000 / FPS)
 }
@@ -171,7 +181,7 @@ const renderShipProjectile = () => {
 const createAsteroids = () => {
    asteroids = []
    let x, y
-   for (let i = 0; i < ASTEROID_NUM; i++) {
+   for (let i = 0; i < ASTEROID_NUM + level; i++) {
       do {
       x = Math.floor(Math.random() * c.width)
       y = Math.floor(Math.random() * c.height)
@@ -185,11 +195,12 @@ const distBetweenPoints = (x1, y1, x2, y2) => {
 }
 
 const newAsteroid = (x, y) => {
+   let levelMult = 1 + 0.1 * level
    let asteroid = {
       x: x,
       y: y,
-      xv: Math.random() * ASTEROID_SPEED / FPS * (Math.random () < 0.5 ? 1 : -1),
-      yv: Math.random() * ASTEROID_SPEED / FPS * (Math.random () < 0.5 ? 1 : -1),
+      xv: Math.random() * ASTEROID_SPEED * levelMult / FPS * (Math.random () < 0.5 ? 1 : -1),
+      yv: Math.random() * ASTEROID_SPEED * levelMult / FPS * (Math.random () < 0.5 ? 1 : -1),
       r: ASTEROID_SIZE / 2,
       a: Math.random() * Math.PI * 2, // in radians
       vert: Math.floor(Math.random() * (ASTEROIDS_VERT + 1) + ASTEROIDS_VERT / 2),
@@ -251,6 +262,14 @@ const renderAsteroids = () => {
    }
 }
 
+//checks asteroid count, updates level, restarts game
+const checkAsteroidCount = () => {
+   if (asteroids.length === 0) {
+      level++
+      runGame()
+   }
+}
+
 const projCollision = () => {
    for (let i = asteroids.length -1; i >= 0; i--) {
       // console.log(asteroids[i])
@@ -265,10 +284,16 @@ const projCollision = () => {
          if (distBetweenPoints(ex, ey, px, py) < er) {
             ship.projs.splice(p, 1)
             asteroids.splice(i, 1)
+            addScore()
             break
          }
       }
    }
+}
+
+//increase score when asteroid is hit
+const addScore = () => {
+   score += 100 
 }
 
 // checks collision between the asteroids and the ship
