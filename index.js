@@ -62,6 +62,18 @@ const getBoard = () => {
     .then(games => loadBoard(games))
 }
 
+const deleteGame = (id) => {
+    fetch(GAMES_URL+`/${id}`, {
+        method: 'DELETE'
+    })
+}
+
+const deleteUser = (id) => {
+    fetch(USERS_URL + `/${id}`, {
+        method: 'DELETE'
+    })
+}
+
 const startGame = (game) => {
     document.querySelector('div').innerHTML = ""
     runGame(game)
@@ -187,16 +199,14 @@ const loadProfile = (userId) => {
     user.games.forEach (game => {
         let li = document.createElement('li')
         let score = document.createElement('p')
-        let level = document.createElement('p')
         let dlt = document.createElement('button')
 
         score.textContent = 'Score: ' + game.score
-        level.textContent = 'Level: ' + game.level
         dlt.textContent = 'Delete'
 
-        dlt.addEventListener('click', )
+        dlt.addEventListener('click', () => deleteGame(game.id))
 
-        li.append(score, level, dlt)
+        li.append(score, dlt)
         ul.appendChild(li)
     })
 
