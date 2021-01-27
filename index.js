@@ -63,17 +63,13 @@ const getBoard = () => {
 }
 
 const startGame = (game) => {
-    document.querySelector( 'main' ).style.display = 'none'
-    document.querySelector('canvas').style.display = ''
-    console.log(game)
-    runGame()
+    document.querySelector('div').innerHTML = ""
+    runGame(game)
 }
 
 const mainMenu = () => {
     let container = document.querySelector('div')
     container.innerHTML = ""
-
-    document.querySelector('canvas').style.display = "none"
 
     let h2 = document.createElement('h2')
     let p = document.createElement('p')
@@ -109,12 +105,11 @@ const mainMenu = () => {
 }
 
 const loadBoard = (games) => {
-    document.querySelector('canvas').style.display = "none"
-
     let container = document.querySelector('div')
-    let exit = document.createElement('button')
-
     container.innerHTML = ""
+    
+    let exit = document.createElement('button')
+    
     exit.textContent = 'X'
 
     container.appendChild(exit)
@@ -130,26 +125,46 @@ const loadBoard = (games) => {
     })
 }
 
-const loadGameOver = () => {
-    let container = document.querySelector('main')
-    let div = document.createElement('div')
-    let h1 = document.createElement('h1')
+const loadGameOver = (game) => {
+    let container = document.querySelector('div')
+    container.innerHTML = ""
+
+    let gameover = document.createElement('h1')
+    let ul = document.createElement('ul')
+    let usrLi = document.createElement('li')
+    let scoreLi = document.createElement('li')
+    let lvlLi = document.createElement('li')
+    let btnLi = document.createElement('li')
+    let profileBtn = document.createElement('button')
+    let hr = document.createElement('hr')
+    let playBtn = document.createElement('button')
 
     let menuBtn = document.createElement('button')
     let leaderBtn = document.createElement('button')
 
-    container.innerHTML = ""
-    container.style.display = ""
-
-    div.className = 'modal'
-    h1.textContent = 'GAME OVER'
+    container.className = 'modal'
+    gameover.textContent = 'GAME OVER'
     menuBtn.textContent = 'Main Menu'
     leaderBtn.textContent = 'Leaderboards'
 
+    usrLi.textContent = game.user.name
+    scoreLi.textContent = game.score
+    lvlLi.textContent = game.level.level
+    profileBtn.textContent = 'Profile'
+
+    playBtn.textContent = 'Play Again?'
+
+    playBtn.addEventListener('click', () => startGame(game))
+    profileBtn.addEventListener('click', () => loadProfile(game.user))
     menuBtn.addEventListener('click', mainMenu)
     leaderBtn.addEventListener('click', getBoard)
 
-    div.append(h1, menuBtn, leaderBtn)
-    container.appendChild(div)
+    btnLi.appendChild(profileBtn)
+    ul.append(usrLi, scoreLi, lvlLi, btnLi)
+    container.append(gameover, ul, menuBtn, leaderBtn, hr, playBtn)
 }
 
+const loadProfile = (user) => {
+    let container = document.querySelector('div')
+    container.innerHTML = ""
+}
