@@ -58,6 +58,12 @@ const handleSubmit = (e) => {
 // }
 
 //NEW Code
+const fetchUser = (id) => {
+    fetch(USERS_URL + `/${id}`)
+    .then(resp => resp.json())
+    .then(user => loadProfile(user))
+}
+
 const createUser = (e) => {
     fetch(USERS_URL, {
         method: 'POST',
@@ -106,22 +112,32 @@ const deleteGame = (id) => {
     fetch(GAMES_URL+`/${id}`, {
         method: 'DELETE'
     })
+    
 }
 
 const deleteUser = (id) => {
     fetch(USERS_URL + `/${id}`, {
         method: 'DELETE'
     })
+    .then(mainMenu())
+}
+
+const updateUser = (e, user) => {
+    e.preventDefault()
+    // debugger
+    fetch(USERS_URL + `/${user.id}`, {
+        method: 'PATCH',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+            'name': e.target.newValue.value
+        })
+    })
+    .then(resp => resp.json())
+    .then(newUser => loadProfile(newUser))
 }
 
 const startGame = (game) => {
-<<<<<<< HEAD
     document.querySelector('div').innerHTML = ""
-=======
-    document.querySelector( 'main' ).style.display = 'none'
-    document.querySelector('canvas').style.display = ''
-    // console.log(game)
->>>>>>> 0879dd70bbb82a86739a45b2e470434b49c4f6b0
     runGame(game)
 }
 
@@ -184,7 +200,6 @@ const loadBoard = (games) => {
 }
 
 const loadGameOver = (game) => {
-<<<<<<< HEAD
     let container = document.querySelector('div')
     container.innerHTML = ""
 
@@ -197,26 +212,12 @@ const loadGameOver = (game) => {
     let profileBtn = document.createElement('button')
     let hr = document.createElement('hr')
     let playBtn = document.createElement('button')
-=======
-    let main = document.querySelector('main')
-    let container = document.querySelector('div')
-    let div = document.createElement('div')
-    let h1 = document.createElement('h1')
->>>>>>> 0879dd70bbb82a86739a45b2e470434b49c4f6b0
 
     let menuBtn = document.createElement('button')
     let leaderBtn = document.createElement('button')
 
-<<<<<<< HEAD
-    container.className = 'modal'
+    // container.className = 'modal'
     gameover.textContent = 'GAME OVER'
-=======
-    container.innerHTML = ""
-    main.style.display = ""
-
-    div.className = 'modal'
-    h1.textContent = 'GAME OVER'
->>>>>>> 0879dd70bbb82a86739a45b2e470434b49c4f6b0
     menuBtn.textContent = 'Main Menu'
     leaderBtn.textContent = 'Leaderboards'
 
@@ -228,7 +229,7 @@ const loadGameOver = (game) => {
     playBtn.textContent = 'Play Again?'
 
     playBtn.addEventListener('click', () => startGame(game))
-    profileBtn.addEventListener('click', () => loadProfile(game.id))
+    profileBtn.addEventListener('click', () => fetchUser(game.user.id))
     menuBtn.addEventListener('click', mainMenu)
     leaderBtn.addEventListener('click', getBoard)
 
@@ -237,9 +238,7 @@ const loadGameOver = (game) => {
     container.append(gameover, ul, menuBtn, leaderBtn, hr, playBtn)
 }
 
-const loadProfile = (userId) => {
-
-    // unfinished
+const loadProfile = (user) => {
 
     let container = document.querySelector('div')
     container.innerHTML = ""
@@ -253,22 +252,33 @@ const loadProfile = (userId) => {
 
     h1.textContent = user.name
     newName.setAttribute('type', 'text')
+    newName.name = 'newValue'
     submit.setAttribute('type', 'submit')
     form.append(newName, submit)
     dltUsrBtn.textContent = 'Delete User'
+
+    form.addEventListener('submit', (e) => updateUser(e, user))
+
+    dltUsrBtn.addEventListener('click', () => deleteUser(user.id))
 
     user.games.forEach (game => {
         let li = document.createElement('li')
         let score = document.createElement('p')
         let dlt = document.createElement('button')
 
+        li.id = game.id
         score.textContent = 'Score: ' + game.score
         dlt.textContent = 'Delete'
 
-        dlt.addEventListener('click', () => deleteGame(game.id))
+        dlt.addEventListener('click', () => {
+            deleteGame(game.id)
+            document.getElementById(li.id).remove()
+        })
 
         li.append(score, dlt)
         ul.appendChild(li)
     })
+
+    container.append(h1, form, dltUsrBtn, ul)
 
 }
