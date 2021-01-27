@@ -43,7 +43,7 @@ c.width = window.innerWidth
 c.height = window.innerHeight
 
 //sets listeners creates asteroids, and creates a loop based on FPS to render the game
-const runGame = () => {
+const runGame = (userGame) => {
    shipListeners()
    let asteroids = []
    createAsteroids()
