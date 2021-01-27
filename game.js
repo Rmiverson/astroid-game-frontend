@@ -3,11 +3,14 @@ const S_SIZE = 30 //ship size
 const SHIP_ACC = 5 //acceleration
 const R_SPEED = 420 //rotation speed
 const FR = 0.5 //friction
+
 const ASTEROID_NUM = 5 // starting number of asteroids
 const ASTEROID_SPEED = 50 // max starting asteroid speed in pixels per second
 const ASTEROID_SIZE = 100 // starting size in pixels
 const ASTEROIDS_VERT = 10 // avg num of vertices on each asteroid
 const ASTEROIDS_JAG = 0.5 // adds jaggedness to polygons
+
+const PROJECTILESPEED = 300 //px
 
 // gets canvas elements for js use
 let c = document.getElementById("gameScreen")
@@ -15,6 +18,8 @@ let ctx = c.getContext("2d")
 
 // sets ship attributes
 let ship = {
+   alive: true, //tells whether the player is alive
+   coolDown: false, //tells whether the lazers are on cooldown
    x: c.width / 2, //ship x position
    y: c.height / 2, //ship y position
    r: S_SIZE / 2, //ship radius or size
@@ -24,30 +29,36 @@ let ship = {
    thrust: { //thrust values in x and y
       x: 0,
       y: 0
-   }
+   },
+   projs: []
+
 }
-
-
 
 //sets our canvas size to the current screen size
 c.width = window.innerWidth
 c.height = window.innerHeight
 
-//use for menue elements to run the game
+//sets listeners creates asteroids, and creates a loop based on FPS to render the game
 const runGame = () => {
    shipListeners()
    let asteroids = []
    createAsteroids()
-   setInterval(renderGame, 1000 / FPS)
-}
+   let game = setInterval(() => {
+      ctx.fillStyle = "#2d2d2d"
+      ctx.fillRect(0, 0, c.width, c.height)
 
-//sets the screen color and renders elements for the game
-const renderGame = () => {
-   ctx.fillStyle = "#2d2d2d"
-   ctx.fillRect(0, 0, c.width, c.height)
-   
-   renderShip()
-   renderAsteroids()
+      if (ship.alive === true) {
+         renderShip()
+         renderAsteroids()
+         renderShipProjectile()
+         projCollision()
+         asteroidCollision()
+      } else {
+         loadGameOver()
+         renderAsteroids()
+         clearInterval(game)
+      }
+   }, 1000 / FPS)
 }
 
 //draws the ship and calls function to handle movement
@@ -102,6 +113,58 @@ const moveShip = () => {
 
 }
 
+// deletes ship by setting alive to false
+const destroyShip = () => {
+   ship.alive = false
+}
+
+// fires ship projectile
+const fire = () => {
+   let proj = {
+      x: ship.x + 4 / 3 * ship.r * Math.cos(ship.a),
+      y: ship.y - 4 / 3 * ship.r * Math.sin(ship.a),
+      xv: PROJECTILESPEED * Math.cos(ship.a) / FPS,
+      yv: PROJECTILESPEED * Math.sin(ship.a) / FPS
+   }
+
+   if (ship.coolDown === false) {
+      ship.projs.push(proj)
+   }
+
+   setTimeout(() => {
+      let i = ship.projs.indexOf(proj)
+      ship.projs.splice(i, 1)
+
+   }, 3000)
+}
+
+// creates projectile
+const renderShipProjectile = () => {
+   for (let i = 0; i < ship.projs.length; i++) {
+      ctx.fillStyle = "red"
+      ctx.beginPath()
+      ctx.arc(ship.projs[i].x, ship.projs[i].y, 5, 0, Math.PI * 2, false)
+      ctx.fill()
+
+      //moevment
+      ship.projs[i].x += ship.projs[i].xv
+      ship.projs[i].y -= ship.projs[i].yv
+
+      //edge handling
+      if (ship.projs[i].x < 0) {
+         ship.projs[i].x = c.width
+      } else if (ship.projs[i].x > c.width) {
+         ship.projs[i].x = 0
+      }
+
+      if (ship.projs[i].y < 0) {
+         ship.projs[i].y = c.height 
+      } else if (ship.projs[i].y > c.height) {
+         ship.projs[i].y = 0
+      }
+   }
+}
+
 //asteroids function
 const createAsteroids = () => {
    asteroids = []
@@ -139,7 +202,7 @@ const newAsteroid = (x, y) => {
 
 //draws the asteroids
 const renderAsteroids = () => {
-   ctx.strokeStyle = "grey"
+   ctx.strokeStyle = "white"
    ctx.lineWidth = S_SIZE / 20
    let x, y, r, a, vert, offs
    for (let i = 0; i < asteroids.length; i++) {
@@ -167,7 +230,6 @@ const renderAsteroids = () => {
       ctx.closePath()
       ctx.stroke()
    
-   
       //move asteroid
       asteroids[i].x += asteroids[i].xv
       asteroids[i].y += asteroids[i].yv
@@ -187,6 +249,42 @@ const renderAsteroids = () => {
    }
 }
 
+const projCollision = () => {
+   for (let i = asteroids.length -1; i >= 0; i--) {
+      // console.log(asteroids[i])
+      let ex = asteroids[i].x
+      let ey = asteroids[i].y
+      let er = asteroids[i].r
+
+      for (let p = ship.projs.length - 1; p >= 0; p--) {
+         px = ship.projs[p].x
+         py = ship.projs[p].y
+
+         if (distBetweenPoints(ex, ey, px, py) < er) {
+            ship.projs.splice(p, 1)
+            asteroids.splice(i, 1)
+            break
+         }
+      }
+   }
+}
+
+// checks collision between the asteroids and the ship
+const asteroidCollision = () => {
+   for (let i = 0; i < asteroids.length; i++) {
+      if (distBetweenPoints(ship.x, ship.y, asteroids[i].x, asteroids[i].y) < ship.r + asteroids[i].r ){
+         destroyShip()
+      }
+   }
+}
+
+// cool down timer function
+const coolDown = () => {
+   setTimeout( () => {
+      ship.coolDown = false
+   }, 1500)
+}
+
 // listens for key presses
 const shipListeners = () => {
    document.addEventListener("keydown", keyDown)
@@ -195,6 +293,14 @@ const shipListeners = () => {
 
 const keyDown = (e) => {
    switch(e.keyCode) {
+      case 32: //space
+         if (ship.coolDown === false) {
+            fire()
+            coolDown()
+            ship.coolDown = true
+         }
+         
+         break
       case 87: //w
          ship.thrusting = true
          break
@@ -209,6 +315,9 @@ const keyDown = (e) => {
 
 const keyUp = (e) => {
    switch(e.keyCode) {
+      case 32: //space
+         
+      break
       case 87: //w
          ship.thrusting = false
          break
