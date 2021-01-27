@@ -35,7 +35,7 @@ const createLevel = (user) => {
     fetch(LEVELS_URL, {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify(),  
+        body: JSON.stringify({'id': user.id}),  
     })
     .then(resp => resp.json())
     .then(level => createGame(level, user))
@@ -70,7 +70,7 @@ const startGame = (game) => {
 }
 
 const mainMenu = () => {
-    let container = document.querySelector('main')
+    let container = document.querySelector('div')
     container.innerHTML = ""
 
     document.querySelector('canvas').style.display = "none"
@@ -84,20 +84,25 @@ const mainMenu = () => {
     let playInput = document.createElement('input')
     let br = document.createElement('br')
     let br2 = document.createElement('br')
+    let hr = document.createElement('hr')
 
     h2.textContent = "Asteroids!"
+    h2.className = "title"
     p.textContent = "Shoot the asteroids! Don't let the asteroid hit you or else it's GAME OVER"
+    p.className = "instructions"
     leaderBtn.textContent = "Leaderboard"
+    leaderBtn.className = "leaderboard"
     h4.textContent = "New Game"
     form.id = "start_game"
     nameInput.type = "text"
     nameInput.name = "name"
     nameInput.placeholder="Enter name"
     playInput.type = "submit"
-    playInput.value = "Play"
+    playInput.value = "START"
+    playInput.className = "start"
 
     form.append(nameInput, br, br2, playInput)
-    container.append(h2, p, leaderBtn, h4, form)
+    container.append(h2, p, leaderBtn, hr, h4, form)
 
     form.addEventListener('submit', handleSubmit)
     leaderBtn.addEventListener('click', getBoard)
@@ -106,7 +111,7 @@ const mainMenu = () => {
 const loadBoard = (games) => {
     document.querySelector('canvas').style.display = "none"
 
-    let container = document.querySelector('main')
+    let container = document.querySelector('div')
     let exit = document.createElement('button')
 
     container.innerHTML = ""
@@ -118,7 +123,7 @@ const loadBoard = (games) => {
     games.sort((a, b) => b.score - a.score)
 
     games.slice(0, 10).forEach(game => {
-        let container = document.querySelector('main')
+        let container = document.querySelector('div')
         let stat = document.createElement('h4')
         stat.textContent = `${game.user.name} ${game.score} ${game.level.level}`
         container.appendChild(stat)
