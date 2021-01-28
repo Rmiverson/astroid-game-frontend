@@ -43,7 +43,8 @@ c.width = window.innerWidth
 c.height = window.innerHeight
 
 //sets listeners creates asteroids, and creates a loop based on FPS to render the game
-const runGame = () => {
+
+const runGame = (user) => {
    ship.alive = true
 
    shipListeners()
@@ -52,6 +53,7 @@ const runGame = () => {
    let gameX = setInterval(() => {
       ctx.fillStyle = "#2d2d2d"
       ctx.fillRect(0, 0, c.width, c.height)
+      
 
       if (ship.alive === true) {
          renderScore(score)
@@ -64,7 +66,7 @@ const runGame = () => {
          checkAsteroidCount(gameX)
 
       } else {
-         createLevel(level, score)
+         createLevel(level, score, user)
          renderAsteroids()
          clearInterval(gameX)
 
@@ -269,9 +271,9 @@ const renderAsteroids = () => {
 //checks asteroid count, updates level, restarts game
 const checkAsteroidCount = (int) => {
    if (asteroids.length === 0) {
-      clearInterval(int)
+      // clearInterval(int)
       level++
-      runGame()
+      createAsteroids()
    }
 }
 
@@ -374,3 +376,7 @@ const keyUp = (e) => {
          break
    }
 }
+
+
+
+
