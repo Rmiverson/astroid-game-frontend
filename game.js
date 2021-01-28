@@ -49,6 +49,10 @@ const runGame = (user) => {
    ship.x = c.width / 2
    ship.y = c.height / 2
    ship.a = 0 / 180 * Math.PI
+   ship.thrust.x = 0
+   ship.thrust.y = 0
+   ship.projs = []
+
 
    shipListeners()
    let asteroids = []

@@ -220,6 +220,7 @@ const loadBoard = (games) => {
 }
 
 const loadGameOver = (game) => {
+    console.log(game)
     let container = document.querySelector('div')
     container.innerHTML = ""
 
@@ -248,7 +249,7 @@ const loadGameOver = (game) => {
 
     playBtn.textContent = 'Play Again?'
 
-    playBtn.addEventListener('click', () => startGame(game))
+    playBtn.addEventListener('click', () => startGame(game.user))
     profileBtn.addEventListener('click', () => fetchUser(game.user.id))
     menuBtn.addEventListener('click', mainMenu)
     leaderBtn.addEventListener('click', getBoard)
