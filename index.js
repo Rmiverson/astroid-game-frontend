@@ -18,45 +18,6 @@ const handleSubmit = (e) => {
     }
 }
 
-
-//OLD CODE
-
-// const createUser = (e) => {
-//     fetch(USERS_URL, {
-//         method: 'POST',
-//         headers: {'Content-Type': 'application/json'},
-//         body: JSON.stringify({
-//             'name': e.target.name.value,
-//         }),
-//     })
-//     .then(resp => resp.json())
-//     .then(user => createLevel(user))
-// }
-
-// const createLevel = (user) => {
-//     fetch(LEVELS_URL, {
-//         method: 'POST',
-//         headers: {'Content-Type': 'application/json'},
-//         body: JSON.stringify({'id': user.id}),  
-//     })
-//     .then(resp => resp.json())
-//     .then(level => createGame(level, user))
-// }
-
-// const createGame = (level, user) => {
-//     fetch(GAMES_URL, {
-//         method: 'POST',
-//         headers: {'Content-Type': 'application/json'},
-//         body: JSON.stringify({
-//             'score': 0,
-//             'user_id': user.id,
-//             'level_id': level.id
-//         }),      
-//     })
-//     .then(resp => resp.json())
-//     .then(game => startGame(game))
-// }
-
 //NEW Code
 const fetchUser = (id) => {
     fetch(USERS_URL + `/${id}`)
@@ -146,33 +107,61 @@ const mainMenu = () => {
     container.innerHTML = ""
 
     let h2 = document.createElement('h2')
+    let div = document.createElement('div')
+    let imgDiv = document.createElement('div')
+    let instructDiv = document.createElement('div')
+    let textDiv = document.createElement('div')
     let p = document.createElement('p')
+    let keyText1 = document.createElement('p')
+    let keyText2 = document.createElement('p')
+    let keyText3 = document.createElement('p')
+    let keyText4 = document.createElement('p')
     let leaderBtn = document.createElement('button')
-    let h4 = document.createElement('h4')
+    let subtitle = document.createElement('p')
     let form = document.createElement('form')
     let nameInput = document.createElement('input')
     let playInput = document.createElement('input')
     let br = document.createElement('br')
     let br2 = document.createElement('br')
     let hr = document.createElement('hr')
-
+    let keyImg = document.createElement('img')
+    let spaceImg = document.createElement('img')
+    
+    instructDiv.className = "instruct"
+    imgDiv.className = 'imgBlock'
+    keyImg.src = "images/keyboard.png"
+    keyImg.id = "keyBtn"
+    spaceImg.id = "spaceBtn"
+    spaceImg.src = "images/space_key.jpg"
     h2.textContent = "Asteroids!"
     h2.className = "title"
-    p.textContent = "Shoot the asteroids! Don't let the asteroid hit you or else it's GAME OVER"
-    p.className = "instructions"
+    textDiv.id = "textDiv"
+    div.className = "instructions"
+    p.textContent = "Shoot the asteroids! Get hit and it's GAME OVER."
+    keyText1.textContent = "Press W to move forward."  
+    keyText2.textContent = "Press A to rotate left."
+    keyText3.textContent = "Press D to rotate right."
+    keyText4.textContent =  "Press Space to shoot."
     leaderBtn.textContent = "Leaderboard"
     leaderBtn.className = "leaderboard"
-    h4.textContent = "New Game"
+    subtitle.textContent = "New Game"
+    subtitle.className = "newGame"
     form.id = "start_game"
     nameInput.type = "text"
     nameInput.name = "name"
     nameInput.placeholder="Enter name"
+    nameInput.className = 'nameInput'
     playInput.type = "submit"
     playInput.value = "START"
     playInput.className = "start"
 
+
+    textDiv.append(keyText1, keyText2, keyText3, keyText4)
+    imgDiv.append(keyImg, spaceImg)
+    instructDiv.append(imgDiv, textDiv)
+    div.append(p, instructDiv)
     form.append(nameInput, br, br2, playInput)
-    container.append(h2, p, leaderBtn, hr, h4, form)
+    container.append(h2, div, leaderBtn, hr, subtitle, form)
 
     form.addEventListener('submit', handleSubmit)
     leaderBtn.addEventListener('click', getBoard)
