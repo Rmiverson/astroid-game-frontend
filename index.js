@@ -19,6 +19,12 @@ const handleSubmit = (e) => {
 }
 
 //NEW Code
+const fetchUser = (id) => {
+    fetch(USERS_URL + `/${id}`)
+    .then(resp => resp.json())
+    .then(user => loadProfile(user))
+}
+
 const createUser = (e) => {
     fetch(USERS_URL, {
         method: 'POST',
@@ -63,17 +69,42 @@ const getBoard = () => {
     .then(games => loadBoard(games))
 }
 
+const deleteGame = (id) => {
+    fetch(GAMES_URL+`/${id}`, {
+        method: 'DELETE'
+    })
+    
+}
+
+const deleteUser = (id) => {
+    fetch(USERS_URL + `/${id}`, {
+        method: 'DELETE'
+    })
+    .then(mainMenu())
+}
+
+const updateUser = (e, user) => {
+    e.preventDefault()
+    // debugger
+    fetch(USERS_URL + `/${user.id}`, {
+        method: 'PATCH',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+            'name': e.target.newValue.value
+        })
+    })
+    .then(resp => resp.json())
+    .then(newUser => loadProfile(newUser))
+}
+
 const startGame = (game) => {
-    document.querySelector( 'main' ).style.display = 'none'
-    document.querySelector('canvas').style.display = ''
+    document.querySelector('div').innerHTML = ""
     runGame(game)
 }
 
 const mainMenu = () => {
     let container = document.querySelector('div')
     container.innerHTML = ""
-
-    document.querySelector('canvas').style.display = "none"
 
     let h2 = document.createElement('h2')
     let div = document.createElement('div')
@@ -137,12 +168,11 @@ const mainMenu = () => {
 }
 
 const loadBoard = (games) => {
-    document.querySelector('canvas').style.display = "none"
-
     let container = document.querySelector('div')
-    let exit = document.createElement('button')
-
     container.innerHTML = ""
+    
+    let exit = document.createElement('button')
+    
     exit.textContent = 'X'
 
     container.appendChild(exit)
@@ -159,26 +189,85 @@ const loadBoard = (games) => {
 }
 
 const loadGameOver = (game) => {
-    let main = document.querySelector('main')
     let container = document.querySelector('div')
-    let div = document.createElement('div')
-    let h1 = document.createElement('h1')
+    container.innerHTML = ""
+
+    let gameover = document.createElement('h1')
+    let ul = document.createElement('ul')
+    let usrLi = document.createElement('li')
+    let scoreLi = document.createElement('li')
+    let lvlLi = document.createElement('li')
+    let btnLi = document.createElement('li')
+    let profileBtn = document.createElement('button')
+    let hr = document.createElement('hr')
+    let playBtn = document.createElement('button')
 
     let menuBtn = document.createElement('button')
     let leaderBtn = document.createElement('button')
 
-    container.innerHTML = ""
-    main.style.display = ""
-
-    div.className = 'modal'
-    h1.textContent = 'GAME OVER'
+    // container.className = 'modal'
+    gameover.textContent = 'GAME OVER'
     menuBtn.textContent = 'Main Menu'
     leaderBtn.textContent = 'Leaderboards'
 
+    usrLi.textContent = game.user.name
+    scoreLi.textContent = game.score
+    lvlLi.textContent = game.level.level
+    profileBtn.textContent = 'Profile'
+
+    playBtn.textContent = 'Play Again?'
+
+    playBtn.addEventListener('click', () => startGame(game))
+    profileBtn.addEventListener('click', () => fetchUser(game.user.id))
     menuBtn.addEventListener('click', mainMenu)
     leaderBtn.addEventListener('click', getBoard)
 
-    div.append(h1, menuBtn, leaderBtn)
-    container.appendChild(div)
+    btnLi.appendChild(profileBtn)
+    ul.append(usrLi, scoreLi, lvlLi, btnLi)
+    container.append(gameover, ul, menuBtn, leaderBtn, hr, playBtn)
 }
 
+const loadProfile = (user) => {
+
+    let container = document.querySelector('div')
+    container.innerHTML = ""
+
+    let h1 = document.createElement('h1')
+    let form = document.createElement('form')
+    let newName = document.createElement('input')
+    let submit = document.createElement('input')
+    let dltUsrBtn = document.createElement('button')
+    let ul = document.createElement('ul')
+
+    h1.textContent = user.name
+    newName.setAttribute('type', 'text')
+    newName.name = 'newValue'
+    submit.setAttribute('type', 'submit')
+    form.append(newName, submit)
+    dltUsrBtn.textContent = 'Delete User'
+
+    form.addEventListener('submit', (e) => updateUser(e, user))
+
+    dltUsrBtn.addEventListener('click', () => deleteUser(user.id))
+
+    user.games.forEach (game => {
+        let li = document.createElement('li')
+        let score = document.createElement('p')
+        let dlt = document.createElement('button')
+
+        li.id = game.id
+        score.textContent = 'Score: ' + game.score
+        dlt.textContent = 'Delete'
+
+        dlt.addEventListener('click', () => {
+            deleteGame(game.id)
+            document.getElementById(li.id).remove()
+        })
+
+        li.append(score, dlt)
+        ul.appendChild(li)
+    })
+
+    container.append(h1, form, dltUsrBtn, ul)
+
+}
