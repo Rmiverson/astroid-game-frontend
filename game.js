@@ -53,7 +53,7 @@ const runGame = (user) => {
    ship.thrust.y = 0
    ship.projs = []
 
-
+   
    shipListeners()
    let asteroids = []
    createAsteroids()
