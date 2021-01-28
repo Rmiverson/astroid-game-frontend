@@ -43,7 +43,10 @@ c.width = window.innerWidth
 c.height = window.innerHeight
 
 //sets listeners creates asteroids, and creates a loop based on FPS to render the game
-const runGame = (userGame) => {
+const runGame = () => {
+   ship.x = c.width / 2
+   ship.y = c.height / 2
+   ship.alive = true
    shipListeners()
    let asteroids = []
    createAsteroids()
@@ -60,13 +63,12 @@ const runGame = (userGame) => {
          checkAsteroidCount()
       } else {
          createLevel(level, score)
-         // loadGameOver()
          renderAsteroids()
          clearInterval(gameX)
          //Needed to set the ship back to alive to reset. Can we
          //reset all the ship's values (because we need to reset the
          //x and y coordinates too)? 
-         ship.alive = true
+
          level = 0
          score = 0
       }
