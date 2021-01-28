@@ -34,10 +34,10 @@ const createUser = (e) => {
         }),
     })
     .then(resp => resp.json())
-    .then(startGame())
+    .then(user => startGame(user))
 }
 
-const createLevel = (level, score) => {
+const createLevel = (level, score, user) => {
     fetch(LEVELS_URL, {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
@@ -46,15 +46,16 @@ const createLevel = (level, score) => {
         }),
     })
     .then(resp => resp.json())
-    .then(level => createGame(level, score))
+    .then(level => createGame(level, score, user))
 }
 
-const createGame = (level, score) => {
+const createGame = (level, score, user) => {
     fetch(GAMES_URL, {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({
             'score': score,
+            'user_id': user.id,
             'level_id': level.id
         }),      
     })
@@ -85,7 +86,6 @@ const deleteUser = (id) => {
 
 const updateUser = (e, user) => {
     e.preventDefault()
-    // debugger
     fetch(USERS_URL + `/${user.id}`, {
         method: 'PATCH',
         headers: {'Content-Type': 'application/json'},
@@ -97,9 +97,9 @@ const updateUser = (e, user) => {
     .then(newUser => loadProfile(newUser))
 }
 
-const startGame = (game) => {
+const startGame = (user) => {
     document.querySelector('div').innerHTML = ""
-    runGame(game)
+    runGame(user)
 }
 
 const mainMenu = () => {
@@ -171,20 +171,51 @@ const loadBoard = (games) => {
     let container = document.querySelector('div')
     container.innerHTML = ""
     
+    let div = document.createElement('div')
+    let table = document.createElement('div')
     let exit = document.createElement('button')
+    let title = document.createElement('h1')
+    let headRow = document.createElement('div')
+    let nameHeader = document.createElement('h3')
+    let scoreHeader = document.createElement('h3')
+    let levelHeader = document.createElement('h3')
     
-    exit.textContent = 'X'
+    table.className = "divTable"
+    exit.textContent = 'Main Menu'
+    title.textContent = "Leaderboard"
+    headRow.className = 'headRow'
+    nameHeader.className = 'divHeader'
+    scoreHeader.className = 'divHeader'
+    levelHeader.className = 'divHeader'
+    nameHeader.textContent = 'Player'
+    scoreHeader.textContent = 'Score'
+    levelHeader.textContent = 'Level'
 
-    container.appendChild(exit)
+    headRow.append(nameHeader, scoreHeader, levelHeader)
+    table.append(headRow)
+    div.append(title, table, exit)
+    container.appendChild(div)
     exit.addEventListener('click', mainMenu)
 
     games.sort((a, b) => b.score - a.score)
 
     games.slice(0, 10).forEach(game => {
-        let container = document.querySelector('div')
-        let stat = document.createElement('h4')
-        stat.textContent = `${game.user.name} ${game.score} ${game.level.level}`
-        container.appendChild(stat)
+        let table = document.querySelector('.divTable')
+        let row = document.createElement('div')
+        let name = document.createElement('h4')
+        let score = document.createElement('h4')
+        let level = document.createElement('h4')
+
+        row.className = 'divRow'
+        name.className = 'divCell'
+        score.className = 'divCell'
+        level.className = 'divCell'
+
+        name.textContent = `${game.user.name}`
+        score.textContent = `${game.score}`
+        level.textContent = `${game.level.level}`
+        row.append(name, score, level)
+        table.appendChild(row)
     })
 }
 
@@ -193,11 +224,10 @@ const loadGameOver = (game) => {
     container.innerHTML = ""
 
     let gameover = document.createElement('h1')
-    let ul = document.createElement('ul')
-    let usrLi = document.createElement('li')
-    let scoreLi = document.createElement('li')
-    let lvlLi = document.createElement('li')
-    let btnLi = document.createElement('li')
+    let stats = document.createElement('div')
+    let player = document.createElement('h2')
+    let score = document.createElement('h4')
+    let level = document.createElement('h4')
     let profileBtn = document.createElement('button')
     let hr = document.createElement('hr')
     let playBtn = document.createElement('button')
@@ -206,13 +236,14 @@ const loadGameOver = (game) => {
     let leaderBtn = document.createElement('button')
 
     // container.className = 'modal'
+    stats.className = 'stats'
     gameover.textContent = 'GAME OVER'
     menuBtn.textContent = 'Main Menu'
-    leaderBtn.textContent = 'Leaderboards'
+    leaderBtn.textContent = 'Leaderboard'
 
-    usrLi.textContent = game.user.name
-    scoreLi.textContent = game.score
-    lvlLi.textContent = game.level.level
+    player.textContent = game.user.name
+    score.textContent = `Score: ${game.score}`
+    level.textContent = `Level: ${game.level.level}`
     profileBtn.textContent = 'Profile'
 
     playBtn.textContent = 'Play Again?'
@@ -222,13 +253,11 @@ const loadGameOver = (game) => {
     menuBtn.addEventListener('click', mainMenu)
     leaderBtn.addEventListener('click', getBoard)
 
-    btnLi.appendChild(profileBtn)
-    ul.append(usrLi, scoreLi, lvlLi, btnLi)
-    container.append(gameover, ul, menuBtn, leaderBtn, hr, playBtn)
+    stats.append(player, score, level, profileBtn)
+    container.append(gameover, stats, menuBtn, leaderBtn, hr, playBtn)
 }
 
 const loadProfile = (user) => {
-
     let container = document.querySelector('div')
     container.innerHTML = ""
 
@@ -237,37 +266,60 @@ const loadProfile = (user) => {
     let newName = document.createElement('input')
     let submit = document.createElement('input')
     let dltUsrBtn = document.createElement('button')
-    let ul = document.createElement('ul')
+    let ol = document.createElement('ol')
+    let options = document.createElement('h2')
+    let optionsDiv = document.createElement('div')
+    let formDiv = document.createElement('div')
+    let edit = document.createElement('h4')
+    let br = document.createElement('br')
+    let menuBtn = document.createElement('button')
+    let vl = document.createElement('vl')
+    let deleteSection = document.createElement('div')
 
     h1.textContent = user.name
     newName.setAttribute('type', 'text')
     newName.name = 'newValue'
     submit.setAttribute('type', 'submit')
-    form.append(newName, submit)
     dltUsrBtn.textContent = 'Delete User'
+    options.textContent = 'User Options'
+    ol.id = 'gameList'
+    edit.textContent = 'Edit Player Name'
+    optionsDiv.className = 'options'
+    deleteSection.className = 'deleteSection'
+    menuBtn.textContent = 'Main Menu'
+    formDiv.className = 'editSection'
+    dltUsrBtn.id = 'dltUsr'
 
+    menuBtn.addEventListener('click', mainMenu)
     form.addEventListener('submit', (e) => updateUser(e, user))
-
     dltUsrBtn.addEventListener('click', () => deleteUser(user.id))
 
-    user.games.forEach (game => {
+    user.games.sort((a, b) => b.score - a.score)
+
+    user.games.slice(0, 10).forEach (game => {
         let li = document.createElement('li')
         let score = document.createElement('p')
         let dlt = document.createElement('button')
 
+        li.className = 'userGame'
         li.id = game.id
         score.textContent = 'Score: ' + game.score
         dlt.textContent = 'Delete'
+        dlt.id = 'deleteGame'
 
         dlt.addEventListener('click', () => {
             deleteGame(game.id)
             document.getElementById(li.id).remove()
         })
 
-        li.append(score, dlt)
-        ul.appendChild(li)
+        li.append(dlt, score)
+        ol.appendChild(li)
     })
 
-    container.append(h1, form, dltUsrBtn, ul)
+    form.append(newName, br, submit)
+    formDiv.append(edit, form)
+    deleteSection.appendChild(dltUsrBtn)
+    optionsDiv.append(formDiv, vl, deleteSection)
+    container.append(h1, ol, menuBtn, options, optionsDiv)
 
 }

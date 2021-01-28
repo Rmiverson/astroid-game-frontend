@@ -23,8 +23,10 @@ body {
    left: 50%;
    transform: translate(-50%, -50%);
    text-align: center;
+   align-items: center;
 }
 
+/* Main Menu */
 .title {
    font-size: 94px;
    font-family: 'Monofett', cursive;
@@ -115,5 +117,77 @@ hr {
    background-color: hsla(46, 100%, 50%, 0.74);
 }
 
+/* Leaderboard */
+.divTable {
+    display:  table;
+    width:auto;
+    padding-left: 3em;
+}
+
+.divRow {
+   display:table-row;
+   width:auto;
+}
+
+.divHeader {
+   float:left;
+   display:table-column;
+   width:100px;
+}
+
+.divCell {
+    float:left;
+    display:table-column;
+    width:100px;
+    text-align: left;
+    padding-left: 0.75em;
+}
+
+.stats {
+   align-items: center;
+   padding-bottom: 1em;
+}
+
+/* userProfile */
+#deleteGame {
+   float: right;
+}
+
+#gameList {
+   display: block;
+   padding-bottom: 2em;
+   padding-top: 2em;
+   width: 200px;
+   padding-left: 6em;
+}
+
+.userGame {
+   text-align: left;
+}
+
+.options {
+   display: flex;
+   width: 350px;
+}
+
+.deleteSection {
+   height: 20px;
+   float: right;
+   bottom: 0em;
+}
+
+vl {
+   border-left: 1px solid white;
+}
+
+.editSection {
+   padding-right: 2em;
+}
+
+#dltUsr {
+   position: absolute;
+   right:    0;
+   bottom:   0;
+}
 
 
