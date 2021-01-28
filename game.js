@@ -46,6 +46,9 @@ c.height = window.innerHeight
 
 const runGame = (user) => {
    ship.alive = true
+   ship.x = c.width / 2
+   ship.y = c.height / 2
+   ship.a = 0 / 180 * Math.PI
 
    shipListeners()
    let asteroids = []
