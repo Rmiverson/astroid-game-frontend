@@ -57,7 +57,10 @@ const runGame = (userGame) => {
          renderShipProjectile()
          projCollision()
          asteroidCollision()
-         checkAsteroidCount()
+         checkAsteroidCount(gameX)
+         // console.log(this)
+
+
       } else {
          createLevel(level, score)
          // loadGameOver()
@@ -262,9 +265,10 @@ const renderAsteroids = () => {
    }
 }
 
-//checks asteroid count, updates level, restarts game
-const checkAsteroidCount = () => {
+// checks asteroid count, updates level, restarts game
+const checkAsteroidCount = (int) => {
    if (asteroids.length === 0) {
+      clearInterval(int)
       level++
       runGame()
    }
