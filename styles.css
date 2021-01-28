@@ -4,6 +4,13 @@ body {
    margin: 0;
    background-color: #242526;
    font-family: 'Major Mono Display', monospace;
+   overflow-x: hidden;
+   overflow-y: hidden;
+}
+
+canvas {
+   width: 100%;
+   height: 100%;
 }
 
 .modal {

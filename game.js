@@ -43,7 +43,9 @@ c.width = window.innerWidth
 c.height = window.innerHeight
 
 //sets listeners creates asteroids, and creates a loop based on FPS to render the game
-const runGame = (userGame) => {
+const runGame = () => {
+   ship.alive = true
+
    shipListeners()
    let asteroids = []
    createAsteroids()
@@ -52,24 +54,20 @@ const runGame = (userGame) => {
       ctx.fillRect(0, 0, c.width, c.height)
 
       if (ship.alive === true) {
+         renderScore(score)
+         renderLevel(level)
          renderShip()
          renderAsteroids()
          renderShipProjectile()
          projCollision()
          asteroidCollision()
          checkAsteroidCount(gameX)
-         // console.log(this)
-
 
       } else {
          createLevel(level, score)
-         // loadGameOver()
          renderAsteroids()
          clearInterval(gameX)
-         //Needed to set the ship back to alive to reset. Can we
-         //reset all the ship's values (because we need to reset the
-         //x and y coordinates too)? 
-         ship.alive = true
+
          level = 0
          score = 0
       }
@@ -136,19 +134,22 @@ const destroyShip = () => {
 // fires ship projectile
 const fire = () => {
    let proj = {
+      id: Math.random() * (0 - 100),
       x: ship.x + 4 / 3 * ship.r * Math.cos(ship.a),
       y: ship.y - 4 / 3 * ship.r * Math.sin(ship.a),
       xv: PROJECTILESPEED * Math.cos(ship.a) / FPS,
       yv: PROJECTILESPEED * Math.sin(ship.a) / FPS
    }
 
-   if (ship.coolDown === false) {
-      ship.projs.push(proj)
-   }
-
+   ship.projs.push(proj)
+   
    setTimeout(() => {
       let i = ship.projs.indexOf(proj)
-      ship.projs.splice(i, 1)
+
+      //fixes the projectile problem for some reason
+      if (i >= 0) {
+         ship.projs.splice(i, 1)
+      }
 
    }, 3000)
 }
@@ -194,7 +195,7 @@ const createAsteroids = () => {
 }
 
 const distBetweenPoints = (x1, y1, x2, y2) => {
-   return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 -y1, 2))
+   return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2))
 }
 
 const newAsteroid = (x, y) => {
@@ -265,7 +266,7 @@ const renderAsteroids = () => {
    }
 }
 
-// checks asteroid count, updates level, restarts game
+//checks asteroid count, updates level, restarts game
 const checkAsteroidCount = (int) => {
    if (asteroids.length === 0) {
       clearInterval(int)
@@ -309,11 +310,23 @@ const asteroidCollision = () => {
    }
 }
 
+const renderScore = (score) => {
+   ctx.font = "20px Major Mono Display"
+   ctx.fillStyle = "white"
+   ctx.fillText("Score: " + score, 10, 50)
+}
+
+const renderLevel = (level) => {
+   ctx.font = "20px Major Mono Display"
+   ctx.fillStyle = "white"
+   ctx.fillText("Level: " + level, 10, 90)
+}
+
 // cool down timer function
 const coolDown = () => {
    setTimeout( () => {
       ship.coolDown = false
-   }, 1500)
+   }, 500)
 }
 
 // listens for key presses
@@ -324,13 +337,14 @@ const shipListeners = () => {
 
 const keyDown = (e) => {
    switch(e.keyCode) {
-      case 32: //space
+      case 32: //space 
          if (ship.coolDown === false) {
             fire()
             coolDown()
             ship.coolDown = true
          }
-         
+         // fire()
+         // console.log(ship.projs)
          break
       case 87: //w
          ship.thrusting = true
