@@ -158,6 +158,11 @@ hr {
 /* userProfile */
 #deleteGame {
    float: right;
+   background-color: rgb(177, 174, 171);
+}
+
+#deleteGame:hover {
+   background-color: rgba(177, 174, 171, 0.562);
 }
 
 #gameList {
@@ -195,6 +200,52 @@ vl {
    position: absolute;
    right:    0;
    bottom:   0;
+   background-color: rgb(177, 174, 171);
+   width: 120px;
+   height: 50px;
+   border-radius: 0%;
+   font-size: 14px;
+   font-family: sans-serif;
+   font-weight: bold;
+}
+
+/* Remaining buttons */
+.menu {
+   margin-top: 1em;
+   background-color: rgb(177, 174, 171);
+   width: 170px;
+   height: 50px;
+   border-radius: 0%;
+   font-size: 16px;
+   font-family: 'Rubik Mono One', sans-serif;
+}
+
+.menu:hover {
+   background-color:rgba(177, 174, 171, 0.562);
+}
+
+.profile {
+   margin-top: 1em;
+   background-color: rgb(177, 174, 171);
+   width: 170px;
+   height: 50px;
+   border-radius: 0%;
+   font-size: 16px;
+   font-family: 'Rubik Mono One', sans-serif;
+}
+
+.profile:hover {
+   background-color:rgba(177, 174, 171, 0.562);
+}
+
+#editBtn {
+   background-color: rgb(177, 174, 171);
+   width: 60px;
+   height: 30px;
+   border-radius: 0%;
+   font-size: 14px;
+   font-family: sans-serif;
+   font-weight: bold;
 }
 
 

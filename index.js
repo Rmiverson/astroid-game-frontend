@@ -18,7 +18,6 @@ const handleSubmit = (e) => {
     }
 }
 
-//NEW Code
 const fetchUser = (id) => {
     fetch(USERS_URL + `/${id}`)
     .then(resp => resp.json())
@@ -190,6 +189,7 @@ const loadBoard = (games) => {
     nameHeader.textContent = 'Player'
     scoreHeader.textContent = 'Score'
     levelHeader.textContent = 'Level'
+    exit.className = 'menu'
 
     headRow.append(nameHeader, scoreHeader, levelHeader)
     table.append(headRow)
@@ -241,13 +241,17 @@ const loadGameOver = (game) => {
     gameover.textContent = 'GAME OVER'
     menuBtn.textContent = 'Main Menu'
     leaderBtn.textContent = 'Leaderboard'
+    leaderBtn.className = 'leaderboard'
+    playBtn.className = 'start'
+    menuBtn.className = 'menu'
+    profileBtn.className = 'profile'
 
     player.textContent = game.user.name
     score.textContent = `Score: ${game.score}`
     level.textContent = `Level: ${game.level.level}`
     profileBtn.textContent = 'Profile'
 
-    playBtn.textContent = 'Play Again?'
+    playBtn.textContent = 'Try Again'
 
     playBtn.addEventListener('click', () => startGame(game.user))
     profileBtn.addEventListener('click', () => fetchUser(game.user.id))
@@ -281,6 +285,7 @@ const loadProfile = (user) => {
     newName.setAttribute('type', 'text')
     newName.name = 'newValue'
     submit.setAttribute('type', 'submit')
+    submit.value = 'Edit'
     dltUsrBtn.textContent = 'Delete User'
     options.textContent = 'User Options'
     ol.id = 'gameList'
@@ -290,6 +295,10 @@ const loadProfile = (user) => {
     menuBtn.textContent = 'Main Menu'
     formDiv.className = 'editSection'
     dltUsrBtn.id = 'dltUsr'
+    menuBtn.className = 'menu'
+    submit.id = 'editBtn'
+    // dltUsrBtn.id = 'deleteBtn'
+
 
     menuBtn.addEventListener('click', mainMenu)
     form.addEventListener('submit', (e) => updateUser(e, user))
@@ -305,7 +314,7 @@ const loadProfile = (user) => {
         li.className = 'userGame'
         li.id = game.id
         score.textContent = 'Score: ' + game.score
-        dlt.textContent = 'Delete'
+        dlt.textContent = '🗑️'
         dlt.id = 'deleteGame'
 
         dlt.addEventListener('click', () => {
@@ -324,3 +333,15 @@ const loadProfile = (user) => {
     container.append(h1, ol, menuBtn, options, optionsDiv)
 
 }
+
+
+// var language = 'javascript';
+// function whichLanguage() {
+        
+//     var language = 'java';
+//     console.log(language)
+       
+      
+// }
+
+// whichLanguage()
