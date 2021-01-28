@@ -44,9 +44,8 @@ c.height = window.innerHeight
 
 //sets listeners creates asteroids, and creates a loop based on FPS to render the game
 const runGame = () => {
-   ship.x = c.width / 2
-   ship.y = c.height / 2
    ship.alive = true
+
    shipListeners()
    let asteroids = []
    createAsteroids()
@@ -55,6 +54,8 @@ const runGame = () => {
       ctx.fillRect(0, 0, c.width, c.height)
 
       if (ship.alive === true) {
+         renderScore(score)
+         renderLevel(level)
          renderShip()
          renderAsteroids()
          renderShipProjectile()
@@ -68,9 +69,6 @@ const runGame = () => {
          createLevel(level, score)
          renderAsteroids()
          clearInterval(gameX)
-         //Needed to set the ship back to alive to reset. Can we
-         //reset all the ship's values (because we need to reset the
-         //x and y coordinates too)? 
 
          level = 0
          score = 0
@@ -267,7 +265,7 @@ const renderAsteroids = () => {
    }
 }
 
-// checks asteroid count, updates level, restarts game
+//checks asteroid count, updates level, restarts game
 const checkAsteroidCount = (int) => {
    if (asteroids.length === 0) {
       clearInterval(int)
@@ -311,11 +309,23 @@ const asteroidCollision = () => {
    }
 }
 
+const renderScore = (score) => {
+   ctx.font = "20px Major Mono Display"
+   ctx.fillStyle = "white"
+   ctx.fillText("Score: " + score, 10, 50)
+}
+
+const renderLevel = (level) => {
+   ctx.font = "20px Major Mono Display"
+   ctx.fillStyle = "white"
+   ctx.fillText("Level: " + level, 10, 90)
+}
+
 // cool down timer function
 const coolDown = () => {
    setTimeout( () => {
       ship.coolDown = false
-   }, 1500)
+   }, 500)
 }
 
 // listens for key presses
@@ -326,13 +336,12 @@ const shipListeners = () => {
 
 const keyDown = (e) => {
    switch(e.keyCode) {
-      case 32: //space
+      case 32: //space 
          if (ship.coolDown === false) {
             fire()
             coolDown()
             ship.coolDown = true
          }
-         
          break
       case 87: //w
          ship.thrusting = true
