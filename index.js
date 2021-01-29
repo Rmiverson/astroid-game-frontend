@@ -2,7 +2,7 @@ document.addEventListener("DOMContentLoaded", () => {
    mainMenu()
 })
 
-const BASE_URL = "http://localhost:3000"
+const BASE_URL = "https://project-phase-3-asteroids.herokuapp.com"
 const GAMES_URL = `${BASE_URL}/games`
 const USERS_URL = `${BASE_URL}/users`
 const LEVELS_URL = `${BASE_URL}/levels`
