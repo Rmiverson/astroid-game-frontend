@@ -4,7 +4,7 @@ const SHIP_ACC = 5 //acceleration
 const R_SPEED = 420 //rotation speed
 const FR = 0.5 //friction
 
-const ASTEROID_NUM = 1 // starting number of asteroids
+const ASTEROID_NUM = 3 // starting number of asteroids
 const ASTEROID_SPEED = 50 // max starting asteroid speed in pixels per second
 const ASTEROID_SIZE = 100 // starting size in pixels
 const ASTEROIDS_VERT = 10 // avg num of vertices on each asteroid
